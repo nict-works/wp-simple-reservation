@@ -1,0 +1,22 @@
+{
+    "name": "nict-works/wp-simple-reservation",
+    "description": "Reservation plugin for Wordpress.",
+    "keywords": [],
+    "homepage": "https://nict.works",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "nict",
+            "email": "info@nict.works",
+            "homepage": "https://nict.works"
+        }
+    ],
+    "type": "wordpress-plugin",
+    "require": {
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}
