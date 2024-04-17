@@ -55,7 +55,7 @@ return function ($context): string {
                     <strong>' . ($reservation->lang_code === 'nl' ? 'Prijs' : 'Price') . ':</strong>
                 </td>
                 <td>
-                    ' . $reservation->price . '
+                    &euro; ' . number_format($reservation->price, 2, ',', '.') . '
                 </td>
             </tr>
         </table>

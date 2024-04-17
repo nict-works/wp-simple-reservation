@@ -70,7 +70,7 @@
                 <?=date('d-m-Y H:i', strtotime($reservation->created_at));?>
             </td>
             <td class="title column-title has-row-actions column-primary page-title" data-colname="Totaal prijs">
-                €<?=number_format($reservation->price, 2, ',', '.');?>
+                &euro; <?=number_format($reservation->price, 2, ',', '.');?>
             </td>
             <td class="title column-title has-row-actions column-primary page-title" data-colname="Geboekt vanaf">
                 <?=date('d-m-Y', strtotime($reservation->start_date));?>

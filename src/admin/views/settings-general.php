@@ -12,7 +12,7 @@
                     <select name="redirection_post_id_<?=$language->slug;?>">
                         <option value="">Selecteer een pagina</option>
                         <?php foreach ($pages[$language->slug] as $page) {?>
-                            <option value="<?=$page->ID;?>" <?=$page->ID === $settings['redirection_post_id_' . $language->slug] ? 'selected' : '';?>><?=$page->post_title;?></option>
+                            <option value="<?=$page->ID;?>" <?=$page->ID == $settings['redirection_post_id_' . $language->slug] ? 'selected' : '';?>><?=$page->post_title;?></option>
                         <?php }?>
                     </select>
                 </td>

@@ -47,7 +47,7 @@ return function ($context): string {
                     <strong>Prijs:</strong>
                 </td>
                 <td>
-                    ' . $reservation->price . '
+                    &euro; ' . number_format($reservation->price, 2, ',', '.') . '
                 </td>
             </tr>
             <tr>

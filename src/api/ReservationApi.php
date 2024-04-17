@@ -44,8 +44,15 @@ class ReservationApi
             3 => 0,
         ];
 
-        foreach ($reservations as $reservation) {
+        $duration_price = 0;
+        $nights = count($reservations) - 1;
+
+        foreach ($reservations as $index => $reservation) {
             $availability[$reservation['availability']]++;
+
+            if ($index !== $nights) {
+                $duration_price += $reservation['price'];
+            }
         }
 
         if ($availability[0] > 0 || $availability[2] > 1 || $availability[3] > 1 || $payload['start_date'] >= $payload['end_date'] || $payload['start_date'] < strtotime(date('Y-m-d'))) {
@@ -55,6 +62,12 @@ class ReservationApi
                 ['status' => 400]
             );
         }
+
+        $cleaning_price = get_option('wp_simple_reservation_cleaning_price');
+        $tourist_tax = get_option('wp_simple_reservation_tourist_tax');
+        $guests = $payload['amount_of_adults'] + $payload['amount_of_children'];
+
+        $price = $duration_price + ($cleaning_price ?? 0) + (($tourist_tax ?? 0) * $nights * $guests);
 
         $wpdb->insert(
             $wpdb->prefix . 'reservations',
@@ -67,6 +80,7 @@ class ReservationApi
                 'start_date' => $payload['start_date'],
                 'end_date' => $payload['end_date'],
                 'lang_code' => $payload['lang_code'],
+                'price' => $price,
             ]
         );
 

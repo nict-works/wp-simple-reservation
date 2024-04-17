@@ -34,6 +34,12 @@ class AdminSettings
         $settings = [
             'email_reservation_admin_subject' => get_option('wp_simple_reservation_email_reservation_admin_subject'),
             'email_reservation_admin_body' => get_option('wp_simple_reservation_email_reservation_admin_body'),
+
+            // Pricing
+            'price' => get_option('wp_simple_reservation_price'),
+            'tourist_tax' => get_option('wp_simple_reservation_tourist_tax'),
+            'cleaning_price' => get_option('wp_simple_reservation_cleaning_price'),
+            'seasonal_prices' => json_decode(get_option('wp_simple_reservation_seasonal_prices', '[]')),
         ];
 
         foreach ($languages as $language) {
@@ -86,6 +92,23 @@ class AdminSettings
 
         $this->check_and_update_option('email_reservation_admin_subject');
         $this->check_and_update_option('email_reservation_admin_body');
+
+        $this->check_and_update_option('price');
+        $this->check_and_update_option('cleaning_price');
+        $this->check_and_update_option('tourist_tax');
+
+        if (isset($_POST['seasonal_prices'])) {
+            $seasonal_prices = [];
+
+            foreach ($_POST['seasonal_prices'] as $seasonal_price) {
+                if (!empty($seasonal_price['start_date']) && !empty($seasonal_price['end_date']) && !empty($seasonal_price['price'])) {
+                    $seasonal_prices[] = (object) $seasonal_price;
+
+                }
+            }
+
+            update_option('wp_simple_reservation_seasonal_prices', json_encode($seasonal_prices));
+        }
     }
 
     private function check_and_update_option($key): void

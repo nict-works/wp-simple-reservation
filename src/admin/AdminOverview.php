@@ -107,7 +107,7 @@ class AdminOverview
             'email' => 'email',
             'amount_of_adults' => 'number',
             'amount_of_children' => 'number',
-            'price' => 'double',
+            'price' => 'float',
             'start_date' => 'date',
             'end_date' => 'date',
             'status' => 'number',
@@ -165,8 +165,8 @@ class AdminOverview
                 $payload[$key] = sanitize_email($_POST[$key]);
             } else if ($type === 'number') {
                 $payload[$key] = (int) $_POST[$key];
-            } else if ($type === 'double') {
-                $payload[$key] = (double) $_POST[$key];
+            } else if ($type === 'float') {
+                $payload[$key] = (float) $_POST[$key];
             } else if ($type === 'date') {
                 $payload[$key] = date('Y-m-d H:i:s', strtotime($_POST[$key]));
             } else {
