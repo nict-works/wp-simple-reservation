@@ -22,6 +22,7 @@ class ReservationApi
             'start_date' => 'date',
             'end_date' => 'date',
             'lang_code' => 'string',
+            'additions' => 'array',
         ]);
 
         if ($payload instanceof Error) {
@@ -63,11 +64,33 @@ class ReservationApi
             );
         }
 
-        $cleaning_price = get_option('wp_simple_reservation_cleaning_price');
+        $price_additions = json_decode(get_option('wp_simple_reservation_price_additions', '[]'));
+        $addition_price = 0;
+        $linked_additions = [];
+
+        $booking_addition_identifiers = [];
+        foreach ($payload['additions'] as $addition) {
+            $booking_addition_identifiers[] = $addition['identifier'];
+        }
+
+        foreach ($price_additions as $price_addition) {
+            if ($price_addition->optional && !in_array($price_addition->identifier, $booking_addition_identifiers)) {
+                continue;
+            }
+
+            $price = ($price_addition->type === 'per_night' ? ($price_addition->price * $nights) : $price_addition->price);
+            $addition_price += $price;
+
+            $linked_additions[] = [
+                'name' => $price_addition->name_nl ?? $price_addition->name_en,
+                'price' => $price,
+            ];
+        }
+
         $tourist_tax = get_option('wp_simple_reservation_tourist_tax');
         $guests = $payload['amount_of_adults'] + $payload['amount_of_children'];
 
-        $price = $duration_price + ($cleaning_price ?? 0) + (($tourist_tax ?? 0) * $nights * $guests);
+        $price = $duration_price + ($cleaning_price ?? 0) + (($tourist_tax ?? 0) * $nights * $guests) + $addition_price;
 
         $wpdb->insert(
             $wpdb->prefix . 'reservations',
@@ -83,6 +106,19 @@ class ReservationApi
                 'price' => $price,
             ]
         );
+
+        $reservation_id = $wpdb->insert_id;
+
+        foreach ($linked_additions as $addition) {
+            $wpdb->insert(
+                $wpdb->prefix . 'reservation_additions',
+                [
+                    'reservation_id' => $reservation_id,
+                    'name' => $addition['name'],
+                    'price' => $addition['price'],
+                ]
+            );
+        }
 
         $reservation = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}reservations WHERE id = %d", $wpdb->insert_id));
 
@@ -119,6 +155,8 @@ class ReservationApi
                 $payload[$key] = (double) $input[$key];
             } else if ($type === 'date') {
                 $payload[$key] = date('Y-m-d', strtotime($input[$key]));
+            } else if ($type === 'array') {
+                $payload[$key] = $input[$key];
             } else {
                 return new Error('Unknown type: ' . $type);
             }

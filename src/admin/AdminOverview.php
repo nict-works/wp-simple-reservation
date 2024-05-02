@@ -49,6 +49,8 @@ class AdminOverview
         $id = (int) $_GET['id'];
         $reservation = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}reservations WHERE id = %d", $id));
 
+        $reservation_additions = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}reservation_additions WHERE reservation_id = $id");
+
         if (!$reservation) {
             wp_redirect(admin_url('admin.php?page=wp-simple-reservations'));
             die;

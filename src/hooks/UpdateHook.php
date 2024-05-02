@@ -22,6 +22,10 @@ class UpdateHook
             $version = $this->update_1_0_1();
         }
 
+        if ($version === '1.0.1') {
+            $version = $this->update_1_1_0();
+        }
+
         update_option('wp_simple_reservation', $version);
     }
 
@@ -65,5 +69,29 @@ class UpdateHook
         $wpdb->query($sql);
 
         return '1.0.1';
+    }
+
+    private function update_1_1_0(): string
+    {
+        global $wpdb;
+
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'reservation_additions';
+
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            reservation_id mediumint(9) NOT NULL,
+            name varchar(254) NOT NULL,
+            price decimal(10, 2) NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+            PRIMARY KEY (id),
+            FOREIGN KEY (reservation_id) REFERENCES {$wpdb->prefix}reservations(id)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
+
+        return '1.1.0';
     }
 }

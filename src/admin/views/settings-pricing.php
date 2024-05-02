@@ -14,23 +14,61 @@
 
             <tr class="form-field form-required term-name-wrap">
                 <th scope="row">
-                    <label for="cleaning_price">
-                        Schoonmaakkosten
-                    </label>
-                </th>
-                <td>
-                    <input type="number" step="0.01" name="cleaning_price" id="cleaning_price" value="<?=$settings['cleaning_price'];?>" />
-                </td>
-            </tr>
-
-            <tr class="form-field form-required term-name-wrap">
-                <th scope="row">
                     <label for="tourist_tax">
                         Toeristenbelasting per nacht
                     </label>
                 </th>
                 <td>
                     <input type="number" step="0.01" name="tourist_tax" id="tourist_tax" value="<?=$settings['tourist_tax'];?>" />
+                </td>
+            </tr>
+
+            <tr class="form-field form-required term-name-wrap">
+                <th scope="row">
+                    <label for="price_additions">
+                        Prijs toevoegingen
+                    </label>
+                </th>
+                <td>
+                    <table class="form-table">
+                        <tbody id="price-additions">
+                            <tr>
+                                <?php foreach ($languages as $language) {?>
+                                    <th>Naam (<?=$language->slug;?>)</th>
+                                <?php }?>
+                                <th>Type</th>
+                                <th>Optionele toevoeging</th>
+                                <th>Prijs</th>
+                                <th></th>
+                            </tr>
+                            <?php foreach ($settings['price_additions'] as $index => $price_addition) {?>
+                            <tr>
+                                <?php foreach ($languages as $language) {?>
+                                    <td>
+                                        <input type="text" name="price_additions[<?=$index;?>][name_<?=$language->slug;?>]" value="<?=$price_addition->{'name_' . $language->slug};?>" required />
+                                    </td>
+                                <?php }?>
+                                <td>
+                                    <select name="price_additions[<?=$index;?>][type]" required>
+                                        <option value="fixed" <?=$price_addition->type === 'fixed' ? 'selected' : '';?>>Vaste prijs</option>
+                                        <option value="per_night" <?=$price_addition->type === 'per_night' ? 'selected' : '';?>>Prijs per nacht</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="price_additions[<?=$index;?>][optional]" <?=$price_addition->optional ? 'checked' : '';?> />
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="price_additions[<?=$index;?>][price]" value="<?=$price_addition->price;?>" required />
+                                </td>
+                                <td>
+                                    <button type="button" class="button button-secondary" data-price-addition-delete="">Verwijder</button>
+                                </td>
+                            </tr>
+                            <?php }?>
+                        </tbody>
+                    </table>
+
+                    <button type="button" id="add-price-addition" class="button button-primary">Voeg toevoeging toe</button>
                 </td>
             </tr>
 
@@ -82,9 +120,20 @@
 <script>
     (() => {
         const addSeasonalPriceButton = document.getElementById('add-seasonal-price');
+        const addPriceAddition = document.getElementById('add-price-addition');
 
         const setupDeleteButtons = () => {
             const deleteButtons = document.querySelectorAll('[data-seasonal-price-delete]');
+
+            deleteButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    button.closest('tr').remove();
+                });
+            });
+        };
+
+        const setupPriceAdditionsDeleteButtons = () => {
+            const deleteButtons = document.querySelectorAll('[data-price-addition-delete]');
 
             deleteButtons.forEach((button) => {
                 button.addEventListener('click', () => {
@@ -118,6 +167,40 @@
             setupDeleteButtons();
         });
 
+        addPriceAddition.addEventListener('click', () => {
+            const table = document.querySelector('#price-additions');
+            const index = table.querySelectorAll('tr').length - 1;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <?php foreach ($languages as $language) {?>
+                    <td>
+                        <input type="text" name="price_additions[${index}][name_<?=$language->slug;?>]" required />
+                    </td>
+                <?php }?>
+                <td>
+                    <select name="price_additions[${index}][type]" required>
+                        <option value="fixed">Vaste prijs</option>
+                        <option value="per_night">Prijs per nacht</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="checkbox" name="price_additions[${index}][optional]" />
+                </td>
+                <td>
+                    <input type="number" step="0.01" name="price_additions[${index}][price]" required />
+                </td>
+                <td>
+                    <button type="button" class="button button-secondary" data-price-addition-delete="">Verwijder</button>
+                </td>
+            `;
+
+            table.appendChild(tr);
+
+            setupPriceAdditionsDeleteButtons();
+        });
+
         setupDeleteButtons();
+        setupPriceAdditionsDeleteButtons();
     })();
 </script>

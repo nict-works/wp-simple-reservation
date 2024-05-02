@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WP_SIMPLE_RESERVATION_VERSION', '1.0.0');
+define('WP_SIMPLE_RESERVATION_VERSION', '1.1.0');
 define('WP_SIMPLE_RESERVATION_DIRECTORY', plugin_dir_path(__FILE__));
 define('WP_SIMPLE_RESERVATION_FILE', __FILE__);
 

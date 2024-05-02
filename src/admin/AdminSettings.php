@@ -38,8 +38,8 @@ class AdminSettings
             // Pricing
             'price' => get_option('wp_simple_reservation_price'),
             'tourist_tax' => get_option('wp_simple_reservation_tourist_tax'),
-            'cleaning_price' => get_option('wp_simple_reservation_cleaning_price'),
             'seasonal_prices' => json_decode(get_option('wp_simple_reservation_seasonal_prices', '[]')),
+            'price_additions' => json_decode(get_option('wp_simple_reservation_price_additions', '[]')),
         ];
 
         foreach ($languages as $language) {
@@ -108,6 +108,29 @@ class AdminSettings
             }
 
             update_option('wp_simple_reservation_seasonal_prices', json_encode($seasonal_prices));
+        }
+
+        if (isset($_POST['price_additions'])) {
+            $price_additions = [];
+
+            foreach ($_POST['price_additions'] as $price_addition) {
+                if (!empty($price_addition['type']) && !empty($price_addition['price'])) {
+                    $price_addition_object = [
+                        'type' => $price_addition['type'],
+                        'optional' => isset($price_addition['optional']),
+                        'price' => $price_addition['price'],
+                        'identifier' => uniqid(),
+                    ];
+
+                    foreach ($languages as $language) {
+                        $price_addition_object['name_' . $language->slug] = $price_addition['name_' . $language->slug];
+                    }
+
+                    $price_additions[] = (object) $price_addition_object;
+                }
+            }
+
+            update_option('wp_simple_reservation_price_additions', json_encode($price_additions));
         }
     }
 

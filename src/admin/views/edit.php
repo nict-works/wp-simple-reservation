@@ -116,4 +116,29 @@
             <input type="submit" name="submit" id="submit" class="button button-primary" value="Opslaan">
         </p>
     </form>
+
+    <h2>Geboekte toevoegingen</h2>
+
+    <table class="wp-list-table widefat fixed striped">
+        <thead>
+            <tr>
+                <th scope="col" id="name" class="manage-column column-name column-primary">Naam</th>
+                <th scope="col" id="price" class="manage-column column-price">Prijs</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <?php foreach ($reservation_additions as $addition) {?>
+                <tr id="addition-<?=$addition->id;?>" class="iedit">
+                    <td class="name column-name has-row-actions column-primary">
+                        <strong>
+                            <?=$addition->name;?>
+                        </strong>
+                    </td>
+                    <td class="price column-price">
+                        <?=$addition->price;?>
+                    </td>
+                </tr>
+            <?php }?>
+        </tbody>
 </div>
