@@ -1,6 +1,10 @@
 <div class="wrap">
   <h1 class="wp-heading-inline">
     Reserveringen
+
+    <a href="<?=admin_url('admin.php?page=wp-simple-reservations&action=create');?>" class="page-title-action">
+      Datum blokkeren
+    </a>
   </h1>
 
   <hr class="wp-header-end">

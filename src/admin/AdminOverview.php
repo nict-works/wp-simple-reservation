@@ -37,6 +37,10 @@ class AdminOverview
             $this->render_edit();
         } else if (isset($_GET['action']) && $_GET['action'] === 'update') {
             $this->update_reservation();
+        } else if (isset($_GET['action']) && $_GET['action'] === 'create') {
+            $this->render_create();
+        } else if (isset($_GET['action']) && $_GET['action'] === 'store') {
+            $this->store_reservation();
         } else {
             $this->render_overview();
         }
@@ -65,6 +69,13 @@ class AdminOverview
         $user_feedback_type = $type;
 
         require WP_SIMPLE_RESERVATION_DIRECTORY . 'src/admin/views/edit.php';
+    }
+
+    private function render_create($type = null, $message = null): void {
+        $user_feedback_message = $message;
+        $user_feedback_type = $type;
+
+        require WP_SIMPLE_RESERVATION_DIRECTORY . 'src/admin/views/create.php';
     }
 
     private function render_overview(): void
@@ -147,6 +158,39 @@ class AdminOverview
         );
 
         $this->render_edit('success', 'Wijzigingen opgeslagen!');
+    }
+
+    private function store_reservation(): void {
+        global $wpdb;
+
+        $payload = $this->validate_post_input([
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ]);
+
+        if ($payload instanceof Error) {
+            $this->render_create('error', $payload->getMessage());
+
+            return;
+        }
+
+        $wpdb->insert(
+            $wpdb->prefix . 'reservations',
+            [
+                'first_name' => 'Geblokkeerd',
+                'last_name' => '',
+                'email' => '',
+                'amount_of_adults' => 0,
+                'amount_of_children' => 0,
+                'price' => 0,
+                'start_date' => $payload['start_date'],
+                'end_date' => $payload['end_date'],
+                'status' => 2,
+                'lang_code' => 'nl',
+            ]
+        );
+
+        $this->render_create('success', 'Datum blokkade opgeslagen! Je kan direct een nieuwe toevoegen.');
     }
 
     private function delete(): void
