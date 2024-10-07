@@ -2,7 +2,7 @@
 /**
  * Plugin name: WP Simple Reservation
  * Description: Simple reservation system.
- * Version: 1.0.0
+ * Version: 1.2.1
  * Author: nict.works
  * Author URI: https://www.nict.works
  * License: GPLv2
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WP_SIMPLE_RESERVATION_VERSION', '1.1.0');
+define('WP_SIMPLE_RESERVATION_VERSION', '1.2.1');
 define('WP_SIMPLE_RESERVATION_DIRECTORY', plugin_dir_path(__FILE__));
 define('WP_SIMPLE_RESERVATION_FILE', __FILE__);
 
