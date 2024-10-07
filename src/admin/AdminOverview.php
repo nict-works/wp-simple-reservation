@@ -85,7 +85,7 @@ class AdminOverview
         $limit = 15;
         $offset = ($page - 1) * $limit;
         $orderedBy = isset($_GET['orderby']) && in_array($_GET['orderby'], $this->allowedOrderColumns) ? $_GET['orderby'] : 'created_at';
-        $orderDirection = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'desc' : 'asc';
+        $orderDirection = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'desc' : (!isset($_GET['order']) && !isset($_GET['orderby']) ? 'desc' : 'asc');
 
         global $wpdb;
 
