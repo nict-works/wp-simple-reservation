@@ -18,8 +18,15 @@
         <th scope="col" id="status" class="manage-column column-primary" abbr="Boekings status">
             Boekings status
         </th>
-        <th scope="col" id="created_at" class="manage-column column-primary" abbr="Boekingsdatum">
-          Geboekt op
+        <th scope="col" id="created_at" class="manage-column column-primary" <?=$orderedBy === 'created_at' ? 'sorted' : 'sortable';?> <?=$orderedBy === 'created_at' && $orderDirection === 'asc' ? 'desc' : 'asc';?>" abbr="Boekingsdatum">
+          <a href="<?=admin_url('admin.php?page=wp-simple-reservations&orderby=created_at&order=' . ($orderedBy === 'created_at' && $orderDirection === 'asc' ? 'desc' : 'asc'));?>">
+            <span>Geboekt op</span>
+
+            <span class="sorting-indicators">
+              <span class="sorting-indicator asc" aria-hidden="true"></span>
+              <span class="sorting-indicator desc" aria-hidden="true"></span>
+            </span>
+          </a>
         </th>
         <th scope="col" id="price" class="manage-column column-primary" abbr="Totaal prijs">
           Prijs

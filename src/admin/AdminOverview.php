@@ -71,7 +71,8 @@ class AdminOverview
         require WP_SIMPLE_RESERVATION_DIRECTORY . 'src/admin/views/edit.php';
     }
 
-    private function render_create($type = null, $message = null): void {
+    private function render_create($type = null, $message = null): void
+    {
         $user_feedback_message = $message;
         $user_feedback_type = $type;
 
@@ -83,7 +84,7 @@ class AdminOverview
         $page = (int) (isset($_GET['paged']) ? $_GET['paged'] : 1);
         $limit = 15;
         $offset = ($page - 1) * $limit;
-        $orderedBy = isset($_GET['orderby']) && in_array($_GET['orderby'], $this->allowedOrderColumns) ? $_GET['orderby'] : 'id';
+        $orderedBy = isset($_GET['orderby']) && in_array($_GET['orderby'], $this->allowedOrderColumns) ? $_GET['orderby'] : 'created_at';
         $orderDirection = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'desc' : 'asc';
 
         global $wpdb;
@@ -160,7 +161,8 @@ class AdminOverview
         $this->render_edit('success', 'Wijzigingen opgeslagen!');
     }
 
-    private function store_reservation(): void {
+    private function store_reservation(): void
+    {
         global $wpdb;
 
         $payload = $this->validate_post_input([
